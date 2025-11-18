@@ -1,4 +1,4 @@
-let formData = { email: " ", message: " " };
+let formData = { email: "", message: "" };
 
 const STORAGE_KEY = "feedback-form-state";
 const formEl = document.querySelector(".feedback-form");
@@ -6,16 +6,18 @@ const  {email, message}  = formEl.elements;
 
 const saveDate = JSON.parse (localStorage.getItem (STORAGE_KEY));
 
-if (saveDate) {
-    if (typeof saveDate.email === 'string') {
-    email.value = saveDate.email;
-    formData.email = saveDate.email;
+
+formEl.addEventListener("input", evt => {
+    if(evt.target.name === "email") {
+        formData.email = evt.target.value;
     }
-    if (typeof saveDate.message === 'string') {
-    message.value = saveDate.message;
-    formData.message = saveDate.message;
+    if(evt.target.name === "message") {
+        formData.message = evt.target.value;
     }
-}
+    
+    saveValue (STORAGE_KEY, formData);
+});
+
 
 formEl.addEventListener("submit" ,evt => {
     evt.preventDefault();
@@ -30,10 +32,7 @@ formEl.addEventListener("submit" ,evt => {
         return;
     }
 
-    console.log (values);
-
-    removeItem (STORAGE_KEY);
-    formData = { email: " ", message: " " };
+    formData = { email: "", message: "" };
     formEl.reset();
 
 });
@@ -45,18 +44,3 @@ const saveValue = (key, formData) => {
         console.warn (error.message);
     }
 };
-
-const loadValue = key => {
-    try {
-        const serializedState = localStorage.getItem (key);
-        return serializedState === null ? undefined : JSON.parse (serializedState);
-    }
-    catch (error) {
-        console.warn (error.message);
-    }
-};
-
-const removeItem = key => {
-    localStorage.removeItem (key);
-}
-
